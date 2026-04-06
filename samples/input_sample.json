@@ -1,0 +1,11 @@
+{
+  "message_id": "msg_001",
+  "original_message": "hey can u help me with this bug its really annoying and i dont get it",
+  "rewrite_style": "formal",
+  "context": {
+    "stream": "backend",
+    "topic": "debugging",
+    "sender_id": "user_42"
+  },
+  "timestamp": "2026-04-06T14:32:00Z"
+}

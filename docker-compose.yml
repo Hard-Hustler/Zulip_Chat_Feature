@@ -1,0 +1,65 @@
+version: "3.9"
+services:
+  minio:
+    image: minio/minio:latest
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    volumes:
+      - minio_data:/data
+
+  ingest:
+    build: ./data/ingest
+    environment:
+      MINIO_BUCKET: zulip-rewriter
+      MINIO_ENDPOINT: http://minio:9000
+      MINIO_ACCESS_KEY: minioadmin
+      MINIO_SECRET_KEY: minioadmin
+      DATA_VERSION: v1
+    depends_on:
+      - minio
+
+  online:
+    build: ./data/online
+    ports:
+      - "8000:8000"
+    environment:
+      MINIO_BUCKET: zulip-rewriter
+      MINIO_ENDPOINT: http://minio:9000
+      MINIO_ACCESS_KEY: minioadmin
+      MINIO_SECRET_KEY: minioadmin
+    depends_on:
+      - minio
+
+  generator:
+    build: ./data/generator
+    environment:
+      REWRITE_URL: http://online:8000/rewrite
+      MINIO_BUCKET: zulip-rewriter
+      MINIO_ENDPOINT: http://minio:9000
+      MINIO_ACCESS_KEY: minioadmin
+      MINIO_SECRET_KEY: minioadmin
+      RATE_SECONDS: "2"
+    depends_on:
+      - minio
+      - online
+
+  batch:
+    build: ./data/batch
+    environment:
+      MINIO_BUCKET: zulip-rewriter
+      MINIO_ENDPOINT: http://minio:9000
+      MINIO_ACCESS_KEY: minioadmin
+      MINIO_SECRET_KEY: minioadmin
+      DATA_VERSION: v1
+    depends_on:
+      - minio
+    profiles:
+      - batch
+
+volumes:
+  minio_data:

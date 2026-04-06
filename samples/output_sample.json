@@ -1,0 +1,11 @@
+{
+  "message_id": "msg_001",
+  "original_message": "hey can u help me with this bug its really annoying and i dont get it",
+  "rewrite_style": "formal",
+  "rewritten_message": "Could you please assist me in resolving this bug? I am having difficulty understanding the issue.",
+  "politeness_score": 0.87,
+  "politeness_label": "polite",
+  "confidence": 0.91,
+  "model_version": "v1.0",
+  "latency_ms": 38
+}
