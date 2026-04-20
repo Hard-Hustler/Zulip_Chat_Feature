@@ -1,18 +1,27 @@
 import os, json, time, random, requests, boto3, pandas as pd
 from datetime import datetime
 from io import BytesIO
+from botocore.client import Config
 
 ENDPOINT   = os.getenv("REWRITE_URL",      "http://localhost:8000/rewrite")
 BUCKET     = os.getenv("MINIO_BUCKET",     "zulip-rewriter")
-ENDPOINT_S3= os.getenv("MINIO_ENDPOINT",   "http://localhost:9000")
-ACCESS_KEY = os.getenv("MINIO_ACCESS_KEY", "minioadmin")
-SECRET_KEY = os.getenv("MINIO_SECRET_KEY", "minioadmin")
+ENDPOINT_S3 = os.getenv("MINIO_ENDPOINT",   "https://129.114.27.192.nip.io") # Added https
+ACCESS_KEY = os.getenv("MINIO_ACCESS_KEY")
+SECRET_KEY = os.getenv("MINIO_SECRET_KEY")
 RATE_SEC   = float(os.getenv("RATE_SECONDS", "2"))
 VERSION    = os.getenv("DATA_VERSION",     "v1")
 
-s3 = boto3.client("s3", endpoint_url=ENDPOINT_S3,
-                  aws_access_key_id=ACCESS_KEY,
-                  aws_secret_access_key=SECRET_KEY)
+s3 = boto3.client(
+    "s3", 
+    endpoint_url=ENDPOINT_S3, 
+    aws_access_key_id=ACCESS_KEY, 
+    aws_secret_access_key=SECRET_KEY,
+    verify=False, # Bypasses the SSL error for .nip.io
+    config=Config(
+        signature_version='s3v4',
+        s3={'addressing_style': 'path'}
+    )
+)
 
 print("Loading training data from MinIO...")
 obj = s3.get_object(Bucket=BUCKET, Key=f"raw/{VERSION}/train.parquet")
