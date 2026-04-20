@@ -1,17 +1,26 @@
 import os, json, boto3, pandas as pd
 from datetime import datetime
 from io import BytesIO
+from botocore.client import Config
 
 BUCKET     = os.getenv("MINIO_BUCKET",     "zulip-rewriter")
-ENDPOINT   = os.getenv("MINIO_ENDPOINT",   "http://localhost:9000")
+ENDPOINT   = os.getenv("MINIO_ENDPOINT", "https://129.114.27.192.nip.io")
 ACCESS_KEY = os.getenv("MINIO_ACCESS_KEY", "minioadmin")
 SECRET_KEY = os.getenv("MINIO_SECRET_KEY", "minioadmin")
 VERSION    = os.getenv("DATA_VERSION",     "v1")
 BATCH_DATE = os.getenv("BATCH_DATE",       datetime.utcnow().strftime("%Y-%m-%d"))
 
-s3 = boto3.client("s3", endpoint_url=ENDPOINT,
-                  aws_access_key_id=ACCESS_KEY,
-                  aws_secret_access_key=SECRET_KEY)
+s3 = boto3.client(
+    "s3",
+    endpoint_url=ENDPOINT,
+    aws_access_key_id=ACCESS_KEY,
+    aws_secret_access_key=SECRET_KEY,
+    verify=False,  # Bypasses SSL certificate check for .nip.io
+    config=Config(
+        signature_version='s3v4',
+        s3={'addressing_style': 'path'}
+    )
+)
 
 print(f"Batch pipeline starting | version={VERSION} | date={BATCH_DATE}")
 
