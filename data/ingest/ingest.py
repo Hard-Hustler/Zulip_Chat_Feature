@@ -60,12 +60,14 @@ print("Step 5: Uploading to MinIO...")
 
 s3 = boto3.client(
     "s3",
-    endpoint_url=os.getenv("MINIO_ENDPOINT"),
-    aws_access_key_id=os.getenv("MINIO_ACCESS_KEY"),
-    aws_secret_access_key=os.getenv("MINIO_SECRET_KEY"),
+    endpoint_url=ENDPOINT, # Use the variable defined at line 8
+    aws_access_key_id=ACCESS_KEY, # Use the variable defined at line 9
+    aws_secret_access_key=SECRET_KEY, # Use the variable defined at line 10
     verify=False,
-    # ADD THIS LINE BELOW
-    config=Config(s3={'addressing_style': 'path'})
+    config=Config(
+        signature_version='s3v4',
+        s3={'addressing_style': 'path'}
+    )
 )
 try:
     s3.create_bucket(Bucket=BUCKET)
