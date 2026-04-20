@@ -1,5 +1,6 @@
 import os, json, boto3, pandas as pd
-from convokit import Corpus, download
+from convokit.model import Corpus
+from convokit.util import download
 from sklearn.model_selection import train_test_split
 
 BUCKET     = os.getenv("MINIO_BUCKET",     "zulip-rewriter")
