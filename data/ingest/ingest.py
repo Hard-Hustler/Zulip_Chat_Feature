@@ -6,8 +6,8 @@ from botocore.client import Config # Ensure this import is at the top
 
 BUCKET     = os.getenv("MINIO_BUCKET",     "zulip-rewriter")
 ENDPOINT   = os.getenv("MINIO_ENDPOINT",   "https://129.114.27.192.nip.io")
-ACCESS_KEY = os.getenv("MINIO_ACCESS_KEY", "minioadmin")
-SECRET_KEY = os.getenv("MINIO_SECRET_KEY", "minioadmin")
+ACCESS_KEY = os.getenv("MINIO_ACCESS_KEY")
+SECRET_KEY = os.getenv("MINIO_SECRET_KEY")
 VERSION    = os.getenv("DATA_VERSION",     "v1")
 
 print("Step 1: Downloading Stack Exchange Politeness Corpus...")
