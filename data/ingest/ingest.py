@@ -4,7 +4,7 @@ from convokit.util import download
 from sklearn.model_selection import train_test_split
 
 BUCKET     = os.getenv("MINIO_BUCKET",     "zulip-rewriter")
-ENDPOINT   = os.getenv("MINIO_ENDPOINT",   "http://localhost:9000")
+ENDPOINT   = os.getenv("MINIO_ENDPOINT",   "https://129.114.27.192.nip.io")
 ACCESS_KEY = os.getenv("MINIO_ACCESS_KEY", "minioadmin")
 SECRET_KEY = os.getenv("MINIO_SECRET_KEY", "minioadmin")
 VERSION    = os.getenv("DATA_VERSION",     "v1")
@@ -56,9 +56,13 @@ df_val, df_test   = train_test_split(df_temp, test_size=0.5, random_state=42,
 print(f"Train: {len(df_train)} | Val: {len(df_val)} | Test: {len(df_test)}")
 
 print("Step 5: Uploading to MinIO...")
-s3 = boto3.client("s3", endpoint_url=ENDPOINT,
-                  aws_access_key_id=ACCESS_KEY,
-                  aws_secret_access_key=SECRET_KEY)
+s3 = boto3.client(
+    "s3", 
+    endpoint_url=ENDPOINT, 
+    aws_access_key_id=ACCESS_KEY, 
+    aws_secret_access_key=SECRET_KEY,
+    verify=False  # This allows connection to the .nip.io endpoint without SSL errors
+)
 try:
     s3.create_bucket(Bucket=BUCKET)
     print(f"Bucket '{BUCKET}' created")
