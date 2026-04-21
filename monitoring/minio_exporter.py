@@ -18,19 +18,19 @@ SCAN_DURATION       = Histogram('data_scan_duration_seconds', 'Time to scan a fi
 LAST_SCAN_TIMESTAMP = Gauge('data_last_scan_timestamp', 'Unix timestamp of last scan', ['bucket'])
 
 BUCKET = os.getenv('MINIO_BUCKET', 'zulip-rewriter')
-MINIO_ENDPOINT = os.getenv('MINIO_ENDPOINT', '129.114.27.192:9000')  # host:port (no https)
-ACCESS_KEY = os.getenv('MINIO_ACCESS_KEY', 'minioadmin')
-SECRET_KEY = os.getenv('MINIO_SECRET_KEY', 'minioadmin')
+MINIO_ENDPOINT = os.getenv('MINIO_ENDPOINT', '129.114.27.192.nip.io') 
+ACCESS_KEY = os.getenv('MINIO_ACCESS_KEY')
+SECRET_KEY = os.getenv('MINIO_SECRET_KEY')
 
 # ── Baseline distribution (compute once from a reference file or hardcode) ──
 # Keys = feature names, values = histogram bin edges and reference counts
 BASELINE = {}  # populated on first scan
 
 client = Minio(
-    MINIO_ENDPOINT,
+    "129.114.27.192.nip.io", # Use the host without https:// prefix
     access_key=ACCESS_KEY,
     secret_key=SECRET_KEY,
-    secure=True,
+    secure=False # Set to False to bypass the SSL certificate requirement
 )
 
 def compute_psi(baseline_counts, current_counts, epsilon=1e-6):
