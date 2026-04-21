@@ -27,10 +27,10 @@ SECRET_KEY = os.getenv('MINIO_SECRET_KEY')
 BASELINE = {}  # populated on first scan
 
 client = Minio(
-    "129.114.27.192.nip.io", # Use the host without https:// prefix
+    "minio.129.114.27.192.nip.io", # Use the host without https:// prefix
     access_key=ACCESS_KEY,
     secret_key=SECRET_KEY,
-    secure=False # Set to False to bypass the SSL certificate requirement
+    secure=True # Set to False to bypass the SSL certificate requirement
 )
 
 def compute_psi(baseline_counts, current_counts, epsilon=1e-6):
