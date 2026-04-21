@@ -3,6 +3,7 @@ import time
 import json
 import io
 import os
+import urllib3
 from minio import Minio
 from prometheus_client import start_http_server, Gauge, Counter, Histogram
 import pandas as pd
@@ -26,11 +27,16 @@ SECRET_KEY = os.getenv('MINIO_SECRET_KEY')
 # Keys = feature names, values = histogram bin edges and reference counts
 BASELINE = {}  # populated on first scan
 
+http_client = urllib3.PoolManager(
+    cert_reqs='CERT_NONE',
+    assert_hostname=False
+)
 client = Minio(
     "minio.129.114.27.192.nip.io", # Use the host without https:// prefix
     access_key=ACCESS_KEY,
     secret_key=SECRET_KEY,
-    secure=True # Set to False to bypass the SSL certificate requirement
+    secure=True, # Set to False to bypass the SSL certificate requirement
+    http_client=http_client
 )
 
 def compute_psi(baseline_counts, current_counts, epsilon=1e-6):
